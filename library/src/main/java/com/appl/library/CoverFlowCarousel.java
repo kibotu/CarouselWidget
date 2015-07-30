@@ -126,7 +126,8 @@ public class CoverFlowCarousel extends Carousel {
 
     @Override
     protected View getViewFromAdapter(int position) {
-        CoverFrame frame = (CoverFrame) mCache.getCachedView();
+        FrameLayout frame = (FrameLayout) mCache.getCachedView();
+
         View recycled = null;
         if (frame != null) {
             recycled = frame.getChildAt(0);
@@ -136,7 +137,8 @@ public class CoverFlowCarousel extends Carousel {
         if (frame == null) {
             frame = new CoverFrame(getContext(), v);
         } else {
-            frame.setCover(v);
+            if (frame instanceof CoverFrame)
+                ((CoverFrame) frame).setCover(v);
         }
 
         //to enable drawing cache
