@@ -1,4 +1,4 @@
-CarouselWidget
+CarouselWidget [![JitPack](https://img.shields.io/github/tag/kibotu/CarouselWidget.svg?label=JitPack)](https://jitpack.io/#kibotu/CarouselWidget/1.0.0-SNAPSHOT)
 =============
 ### Description
 Android CarouselWidget widget with demo.
@@ -16,5 +16,5 @@ You just need to add the following dependency to your `build.gradle`:
 	}
 	
 	dependencies {
-        compile 'com.github.kibotu:CarouselWidget:SNAPSHOT'
+		compile 'com.github.kibotu:CarouselWidget:1.0.0-SNAPSHOT'
     }
