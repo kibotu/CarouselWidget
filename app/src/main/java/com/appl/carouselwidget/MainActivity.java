@@ -3,16 +3,10 @@ package com.appl.carouselwidget;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.util.AttributeSet;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-
-import com.appl.library.Carousel;
 import com.appl.library.CoverFlowCarousel;
 
 
@@ -23,14 +17,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CoverFlowCarousel carousel = (CoverFlowCarousel)findViewById(R.id.carousel);
+        CoverFlowCarousel carousel = (CoverFlowCarousel) findViewById(R.id.carousel);
         final MyAdapter adapter = new MyAdapter();
         carousel.setAdapter(adapter);
-        carousel.setSelection(adapter.getCount()/2); //adapter.getCount()-1
+        carousel.setSelection(adapter.getCount() / 2); //adapter.getCount()-1
         //carousel.setSlowDownCoefficient(1);
         carousel.setSpacing(0.5f);
 
-        Button addButton = (Button)findViewById(R.id.add_botton);
+        Button addButton = (Button) findViewById(R.id.add_botton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,10 +33,9 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-
     private class MyAdapter extends BaseAdapter {
         private int[] mResourceIds = {R.drawable.poster1, R.drawable.poster2, R.drawable.poster3, R.drawable.poster4,
-            R.drawable.poster5};
+                R.drawable.poster5};
 
         private int mCount = mResourceIds.length * 5;
 
@@ -67,14 +60,14 @@ public class MainActivity extends ActionBarActivity {
             if (convertView == null) {
                 v = new MyFrame(MainActivity.this);
             } else {
-                v = (MyFrame)convertView;
+                v = (MyFrame) convertView;
             }
 
             v.setImageResource(mResourceIds[position % mResourceIds.length]);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, "clicked position:"+position,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "clicked position:" + position, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -82,16 +75,16 @@ public class MainActivity extends ActionBarActivity {
             return v;
         }
 
-        public void addView(){
+        public void addView() {
             mCount++;
             notifyDataSetChanged();
         }
     }
 
-    public static class MyFrame extends FrameLayout{
+    public static class MyFrame extends FrameLayout {
         private ImageView mImageView;
 
-        public void setImageResource(int resId){
+        public void setImageResource(int resId) {
             mImageView.setImageResource(resId);
         }
 
@@ -110,7 +103,7 @@ public class MainActivity extends ActionBarActivity {
         public void setSelected(boolean selected) {
             super.setSelected(selected);
 
-            if(selected) {
+            if (selected) {
                 mImageView.setAlpha(1.0f);
             } else {
                 mImageView.setAlpha(0.5f);

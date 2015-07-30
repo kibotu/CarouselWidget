@@ -1,15 +1,14 @@
 package com.appl.library;
 
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.*;
 import android.widget.Adapter;
 import android.widget.Scroller;
+
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
 
 /**
  * @author Martin Appl (appl.m@seznam.cz)
@@ -42,7 +41,9 @@ public class Carousel extends ViewGroup {
      */
     protected static final int TOUCH_STATE_FLING = 2;
 
-    /** Aligning in progress */
+    /**
+     * Aligning in progress
+     */
     protected static final int TOUCH_STATE_ALIGN = 3;
 
     private final Scroller mScroller = new Scroller(getContext());
@@ -246,8 +247,10 @@ public class Carousel extends ViewGroup {
             View oldSelected = getChildAt(oldReverseIndex);
             View newSelected = getChildAt(mReverseOrderIndex);
 
-            oldSelected.setSelected(false);
-            newSelected.setSelected(true);
+            if (oldSelected != null)
+                oldSelected.setSelected(false);
+            if (newSelected != null)
+                newSelected.setSelected(true);
 
             mSelection = mFirstVisibleChild + mReverseOrderIndex;
             if (mOnItemSelectedListener != null) {
@@ -271,7 +274,7 @@ public class Carousel extends ViewGroup {
         b = t + v.getMeasuredHeight();
 
         v.layout(l, t, r, b);
-        return r - (int)(v.getMeasuredWidth() * mSpacing);
+        return r - (int) (v.getMeasuredWidth() * mSpacing);
     }
 
     /**
@@ -288,7 +291,7 @@ public class Carousel extends ViewGroup {
         b = t + v.getMeasuredHeight();
 
         v.layout(l, t, r, b);
-        return l + (int)(v.getMeasuredWidth() * mSpacing);
+        return l + (int) (v.getMeasuredWidth() * mSpacing);
     }
 
     /**
@@ -300,7 +303,7 @@ public class Carousel extends ViewGroup {
      */
     protected View addAndMeasureChild(final View child, final int layoutMode) {
         if (child.getLayoutParams() == null) child.setLayoutParams(new LayoutParams(mChildWidth,
-            mChildHeight));
+                mChildHeight));
 
         final int index = layoutMode == LAYOUT_MODE_TO_BEFORE ? 0 : -1;
         addViewInLayout(child, index, child.getLayoutParams(), true);
@@ -317,11 +320,11 @@ public class Carousel extends ViewGroup {
      * Remove all data, reset to initial state and attempt to refill
      */
     private void reset() {
-        if(mAdapter == null || mAdapter.getCount() == 0){
+        if (mAdapter == null || mAdapter.getCount() == 0) {
             return;
         }
 
-        if(getChildCount() == 0){
+        if (getChildCount() == 0) {
             requestLayout();
             return;
         }
@@ -372,11 +375,11 @@ public class Carousel extends ViewGroup {
         refillRightToLeft(leftScreenEdge);
     }
 
-    protected int getPartOfViewCoveredBySibling(){
-        return (int)(mChildWidth * (1.0f - mSpacing));
+    protected int getPartOfViewCoveredBySibling() {
+        return (int) (mChildWidth * (1.0f - mSpacing));
     }
 
-    protected View getViewFromAdapter(int position){
+    protected View getViewFromAdapter(int position) {
         return mAdapter.getView(position, mCache.getCachedView(), this);
     }
 
@@ -390,7 +393,7 @@ public class Carousel extends ViewGroup {
 
         View child = getChildAt(0);
         int childRight = child.getRight();
-        int newRight = childRight - (int)(mChildWidth * mSpacing);
+        int newRight = childRight - (int) (mChildWidth * mSpacing);
 
         while (newRight - getPartOfViewCoveredBySibling() > leftScreenEdge && mFirstVisibleChild > 0) {
             mFirstVisibleChild--;
@@ -419,10 +422,10 @@ public class Carousel extends ViewGroup {
 
         child = getChildAt(getChildCount() - 1);
         int childLeft = child.getLeft();
-        newLeft = childLeft + (int)(mChildWidth * mSpacing);
+        newLeft = childLeft + (int) (mChildWidth * mSpacing);
 
         while (newLeft + getPartOfViewCoveredBySibling() < rightScreenEdge && mLastVisibleChild < mAdapter
-            .getCount() - 1) {
+                .getCount() - 1) {
             mLastVisibleChild++;
 
             child = getViewFromAdapter(mLastVisibleChild);
@@ -447,7 +450,7 @@ public class Carousel extends ViewGroup {
         // check if we should remove any views in the left
         View firstChild = getChildAt(0);
 
-        while (firstChild != null && firstChild.getLeft()+(mChildWidth * mSpacing)  < leftScreenEdge && getChildCount() > 1) {
+        while (firstChild != null && firstChild.getLeft() + (mChildWidth * mSpacing) < leftScreenEdge && getChildCount() > 1) {
 
             // remove view
             removeViewsInLayout(0, 1);
@@ -480,8 +483,8 @@ public class Carousel extends ViewGroup {
 
         // check if we should remove any views in the right
         View lastChild = getChildAt(getChildCount() - 1);
-        while (lastChild != null && lastChild.getRight() - (mChildWidth * mSpacing)  > rightScreenEdge &&
-            getChildCount() > 1) {
+        while (lastChild != null && lastChild.getRight() - (mChildWidth * mSpacing) > rightScreenEdge &&
+                getChildCount() > 1) {
             // remove the right view
             removeViewsInLayout(getChildCount() - 1, 1);
 
@@ -560,7 +563,7 @@ public class Carousel extends ViewGroup {
                  * Locally do absolute value. mLastMotionX is set to the x value
                  * of the down event.
                  */
-                final int xDiff = (int)Math.abs(x - mLastMotionX);
+                final int xDiff = (int) Math.abs(x - mLastMotionX);
 
                 final int touchSlop = mTouchSlop;
                 final boolean xMoved = xDiff > touchSlop;
@@ -656,12 +659,12 @@ public class Carousel extends ViewGroup {
 
                 if (mTouchState == TOUCH_STATE_SCROLLING) {
                     // Scroll to follow the motion event
-                    final int deltaX = (int)(mLastMotionX - x);
+                    final int deltaX = (int) (mLastMotionX - x);
                     mLastMotionX = x;
 
                     scrollByDelta(deltaX);
                 } else {
-                    final int xDiff = (int)Math.abs(x - mLastMotionX);
+                    final int xDiff = (int) Math.abs(x - mLastMotionX);
 
                     final int touchSlop = mTouchSlop;
                     final boolean xMoved = xDiff > touchSlop;
@@ -680,8 +683,8 @@ public class Carousel extends ViewGroup {
                 if (mTouchState == TOUCH_STATE_SCROLLING) {
 
                     mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    int initialXVelocity = (int)mVelocityTracker.getXVelocity();
-                    int initialYVelocity = (int)mVelocityTracker.getYVelocity();
+                    int initialXVelocity = (int) mVelocityTracker.getXVelocity();
+                    int initialYVelocity = (int) mVelocityTracker.getYVelocity();
 
                     if (Math.abs(initialXVelocity) + Math.abs(initialYVelocity) > mMinimumVelocity) {
                         fling(-initialXVelocity, -initialYVelocity);
@@ -728,7 +731,7 @@ public class Carousel extends ViewGroup {
         else leftInPixels = mLeftEdge;
 
         mScroller.fling(x, y, velocityX, velocityY, leftInPixels - centerItemLeft,
-            rightInPixels - centerItemRight + 1, 0, 0);
+                rightInPixels - centerItemRight + 1, 0, 0);
 
         invalidate();
     }
@@ -760,7 +763,7 @@ public class Carousel extends ViewGroup {
     }
 
     public void setSlowDownCoefficient(int c) {
-        if(c < 1) throw new IllegalArgumentException("Slowdown coeficient must be greater than 0");
+        if (c < 1) throw new IllegalArgumentException("Slowdown coeficient must be greater than 0");
         mSlowDownCoefficient = c;
     }
 
