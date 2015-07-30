@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.*;
 import android.widget.Adapter;
 import android.widget.Scroller;
-import com.appl.library.CoverFlowCarousel.CoverFrame;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -93,7 +92,7 @@ public class Carousel extends ViewGroup {
     private int mFirstVisibleChild;
     private int mLastVisibleChild;
 
-    protected final ViewCache<CoverFrame> mCache = new ViewCache<>();
+    protected final ViewCache<View> mCache = new ViewCache<>();
 
     protected int mRightEdge = NO_VALUE;
     protected int mLeftEdge = NO_VALUE;
@@ -456,8 +455,7 @@ public class Carousel extends ViewGroup {
             // remove view
             removeViewsInLayout(0, 1);
 
-            if (firstChild instanceof CoverFrame)
-                mCache.cacheView((CoverFrame) firstChild);
+            mCache.cacheView(firstChild);
 
             mFirstVisibleChild++;
             mReverseOrderIndex--;
@@ -490,9 +488,7 @@ public class Carousel extends ViewGroup {
             // remove the right view
             removeViewsInLayout(getChildCount() - 1, 1);
 
-            if (lastChild instanceof CoverFrame) {
-                mCache.cacheView((CoverFrame) lastChild);
-            }
+            mCache.cacheView(lastChild);
 
             mLastVisibleChild--;
             if (getChildCount() - 1 == mReverseOrderIndex) {
