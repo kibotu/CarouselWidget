@@ -126,24 +126,26 @@ public class CoverFlowCarousel extends Carousel {
 
     @Override
     protected View getViewFromAdapter(int position) {
-        CoverFrame frame = (CoverFrame) mCache.getCachedView();
+
+        CoverFrame cachedView = mCache.getCachedView();
+
         View recycled = null;
-        if (frame != null) {
-            recycled = frame.getChildAt(0);
+        if (cachedView != null) {
+            recycled = cachedView.getChildAt(0);
         }
 
         View v = mAdapter.getView(position, recycled, this);
-        if (frame == null) {
-            frame = new CoverFrame(getContext(), v);
+        if (cachedView == null) {
+            cachedView = new CoverFrame(getContext(), v);
         } else {
-            frame.setCover(v);
+            cachedView.setCover(v);
         }
 
         //to enable drawing cache
-        if (android.os.Build.VERSION.SDK_INT >= 11) frame.setLayerType(LAYER_TYPE_SOFTWARE, null);
-        frame.setDrawingCacheEnabled(true);
+        if (android.os.Build.VERSION.SDK_INT >= 11) cachedView.setLayerType(LAYER_TYPE_SOFTWARE, null);
+        cachedView.setDrawingCacheEnabled(true);
 
-        return frame;
+        return cachedView;
     }
 
     private float getRotationAngle(int childCenter) {
@@ -285,7 +287,7 @@ public class CoverFlowCarousel extends Carousel {
         mMaxRotationAngle = maxRotationAngle;
     }
 
-    private class CoverFrame extends FrameLayout {
+    public static class CoverFrame extends FrameLayout {
         private Bitmap mReflectionCache;
         private boolean mReflectionCacheInvalid = false;
 
@@ -325,16 +327,17 @@ public class CoverFlowCarousel extends Carousel {
         public Bitmap getDrawingCache(boolean autoScale) {
             final Bitmap b = super.getDrawingCache(autoScale);
 
-            if (mReflectionCacheInvalid) {
-                if (/*(mTouchState != TOUCH_STATE_FLING && mTouchState != TOUCH_STATE_ALIGN) || */mReflectionCache == null) {
-                    try {
-                        mReflectionCache = createReflectionBitmap(b);
-                        mReflectionCacheInvalid = false;
-                    } catch (NullPointerException e) {
-                        Log.e(VIEW_LOG_TAG, "Null pointer in createReflectionBitmap. Bitmap b=" + b, e);
-                    }
-                }
-            }
+            //todo uncomment after adding support for reflection
+//            if (mReflectionCacheInvalid) {
+//                if (/*(mTouchState != TOUCH_STATE_FLING && mTouchState != TOUCH_STATE_ALIGN) || */mReflectionCache == null) {
+//                    try {
+//                        mReflectionCache = createReflectionBitmap(b);
+//                        mReflectionCacheInvalid = false;
+//                    } catch (NullPointerException e) {
+//                        Log.e(VIEW_LOG_TAG, "Null pointer in createReflectionBitmap. Bitmap b=" + b, e);
+//                    }
+//                }
+//            }
             return b;
         }
 
