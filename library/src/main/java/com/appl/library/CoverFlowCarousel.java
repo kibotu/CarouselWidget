@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 /**
@@ -14,6 +13,7 @@ import android.widget.FrameLayout;
  */
 public class CoverFlowCarousel extends Carousel {
 
+    private static final String TAG = CoverFlowCarousel.class.getSimpleName();
     /**
      * Widget size on which was tuning of parameters done. This value is used to scale parameters on when widgets has different size
      */
@@ -94,7 +94,7 @@ public class CoverFlowCarousel extends Carousel {
         super(context, attrs, defStyleAttr);
     }
 
-    private void setTransformation(View v){
+    private void setTransformation(View v) {
         int c = getChildCenter(v);
         v.setRotationY(getRotationAngle(c) - getAngleOnCircle(c));
         v.setTranslationX(getChildAdjustPosition(v));
@@ -114,7 +114,7 @@ public class CoverFlowCarousel extends Carousel {
     @Override
     public void computeScroll() {
         super.computeScroll();
-        for(int i=0; i < getChildCount(); i++){
+        for (int i = 0; i < getChildCount(); i++) {
             setTransformation(getChildAt(i));
         }
     }
@@ -125,74 +125,75 @@ public class CoverFlowCarousel extends Carousel {
     }
 
     @Override
-    protected View getViewFromAdapter(int position){
+    protected View getViewFromAdapter(int position) {
         CoverFrame frame = (CoverFrame) mCache.getCachedView();
         View recycled = null;
-        if(frame != null) {
+        if (frame != null) {
             recycled = frame.getChildAt(0);
         }
 
-        View v = mAdapter.getView(position, recycled , this);
-        if(frame == null) {
+        View v = mAdapter.getView(position, recycled, this);
+        if (frame == null) {
             frame = new CoverFrame(getContext(), v);
         } else {
             frame.setCover(v);
         }
 
         //to enable drawing cache
-        if(android.os.Build.VERSION.SDK_INT >= 11) frame.setLayerType(LAYER_TYPE_SOFTWARE, null);
+        if (android.os.Build.VERSION.SDK_INT >= 11) frame.setLayerType(LAYER_TYPE_SOFTWARE, null);
         frame.setDrawingCacheEnabled(true);
 
         return frame;
     }
 
-    private float getRotationAngle(int childCenter){
+    private float getRotationAngle(int childCenter) {
         return -mMaxRotationAngle * getClampedRelativePosition(getRelativePosition(childCenter), mRotationThreshold * getWidgetSizeMultiplier());
     }
 
-    private float getAngleOnCircle(int childCenter){
-        float x = getRelativePosition(childCenter)/mRadius;
-        if(x < -1.0f) x = -1.0f;
-        if(x > 1.0f) x = 1.0f;
+    private float getAngleOnCircle(int childCenter) {
+        float x = getRelativePosition(childCenter) / mRadius;
+        if (x < -1.0f) x = -1.0f;
+        if (x > 1.0f) x = 1.0f;
 
-        return (float) (Math.acos(x)/Math.PI*180.0f - 90.0f);
+        return (float) (Math.acos(x) / Math.PI * 180.0f - 90.0f);
     }
 
-    private float getScaleFactor(int childCenter){
-        return 1 + (mMaxScaleFactor-1) * (1 - Math.abs(getClampedRelativePosition(getRelativePosition(childCenter), mScalingThreshold * getWidgetSizeMultiplier())));
+    private float getScaleFactor(int childCenter) {
+        return 1 + (mMaxScaleFactor - 1) * (1 - Math.abs(getClampedRelativePosition(getRelativePosition(childCenter), mScalingThreshold * getWidgetSizeMultiplier())));
     }
 
     /**
      * Clamps relative position by threshold, and produces values in range -1 to 1 directly usable for transformation computation
-     * @param position value int range -1 to 1
+     *
+     * @param position  value int range -1 to 1
      * @param threshold always positive value of threshold distance from center in range 0-1
      * @return
      */
-    private float getClampedRelativePosition(float position, float threshold){
-        if(position < 0){
-            if(position < -threshold) return -1f;
-            else return position/threshold;
-        }
-        else{
-            if(position > threshold) return 1;
-            else return position/threshold;
+    private float getClampedRelativePosition(float position, float threshold) {
+        if (position < 0) {
+            if (position < -threshold) return -1f;
+            else return position / threshold;
+        } else {
+            if (position > threshold) return 1;
+            else return position / threshold;
         }
     }
 
     /**
      * Calculates relative position on screen in range -1 to 1, widgets out of screen can have values ove 1 or -1
+     *
      * @param pixexPos Absolute position in pixels including scroll offset
      * @return relative position
      */
-    private float getRelativePosition(int pixexPos){
-        final int half = getWidth()/2;
+    private float getRelativePosition(int pixexPos) {
+        final int half = getWidth() / 2;
         final int centerPos = getScrollX() + half;
 
-        return (pixexPos - centerPos)/((float) half);
+        return (pixexPos - centerPos) / ((float) half);
     }
 
-    private float getWidgetSizeMultiplier(){
-        return ((float)mTuningWidgetSize)/((float)getWidth());
+    private float getWidgetSizeMultiplier() {
+        return ((float) mTuningWidgetSize) / ((float) getWidth());
     }
 
     private float getChildAdjustPosition(View child) {
@@ -203,30 +204,31 @@ public class CoverFlowCarousel extends Carousel {
         return d;
     }
 
-    private float getSpacingMultiplierOnCirlce(int childCenter){
-        float x = getRelativePosition(childCenter)/mRadius;
+    private float getSpacingMultiplierOnCirlce(int childCenter) {
+        float x = getRelativePosition(childCenter) / mRadius;
         return (float) Math.sin(Math.acos(x));
     }
 
     /**
      * Compute offset following path on circle
+     *
      * @param childCenter
      * @return offset from position on unitary circle
      */
-    private float getOffsetOnCircle(int childCenter){
-        float x = getRelativePosition(childCenter)/mRadius;
-        if(x < -1.0f) x = -1.0f;
-        if(x > 1.0f) x = 1.0f;
+    private float getOffsetOnCircle(int childCenter) {
+        float x = getRelativePosition(childCenter) / mRadius;
+        if (x < -1.0f) x = -1.0f;
+        if (x > 1.0f) x = 1.0f;
 
         return (float) (1 - Math.sin(Math.acos(x)));
     }
 
-    private float getChildCircularPathZOffset(int center){
+    private float getChildCircularPathZOffset(int center) {
 
         final float v = getOffsetOnCircle(center);
         final float z = mPerspectiveMultiplier * v;
 
-        return  z;
+        return z;
     }
 
     /**
@@ -239,7 +241,7 @@ public class CoverFlowCarousel extends Carousel {
      */
     protected View addAndMeasureChild(final View child, final int layoutMode) {
         if (child.getLayoutParams() == null) child.setLayoutParams(new LayoutParams(mChildWidth,
-            mChildHeight));
+                mChildHeight));
 
         final int index = layoutMode == LAYOUT_MODE_TO_BEFORE ? 0 : -1;
         addViewInLayout(child, index, child.getLayoutParams(), true);
@@ -252,7 +254,7 @@ public class CoverFlowCarousel extends Carousel {
         return child;
     }
 
-    private Bitmap createReflectionBitmap(Bitmap original){
+    private Bitmap createReflectionBitmap(Bitmap original) {
         final int w = original.getWidth();
         final int h = original.getHeight();
         final int rh = (int) (h * mReflectionHeight);
@@ -271,7 +273,17 @@ public class CoverFlowCarousel extends Carousel {
         return reflection;
     }
 
+    public void setMaxScaleFactor(float maxScaleFactor) {
+        mMaxScaleFactor = maxScaleFactor;
+    }
 
+    public void setRotationThreshold(float rotationThreshold) {
+        mRotationThreshold = rotationThreshold;
+    }
+
+    public void setMaxRotationAngle(int maxRotationAngle) {
+        mMaxRotationAngle = maxRotationAngle;
+    }
 
     private class CoverFrame extends FrameLayout {
         private Bitmap mReflectionCache;
@@ -283,10 +295,10 @@ public class CoverFlowCarousel extends Carousel {
             setCover(cover);
         }
 
-        public void setCover(View cover){
+        public void setCover(View cover) {
             removeAllViews();
             //mReflectionCacheInvalid = true; //todo uncomment after adding support for reflection
-            if(cover.getLayoutParams() != null) setLayoutParams(cover.getLayoutParams());
+            if (cover.getLayoutParams() != null) setLayoutParams(cover.getLayoutParams());
 
             final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             lp.leftMargin = 1;
@@ -294,12 +306,12 @@ public class CoverFlowCarousel extends Carousel {
             lp.rightMargin = 1;
             lp.bottomMargin = 1;
 
-            if (cover.getParent()!=null && cover.getParent() instanceof ViewGroup) {
+            if (cover.getParent() != null && cover.getParent() instanceof ViewGroup) {
                 ViewGroup parent = (ViewGroup) cover.getParent();
                 parent.removeView(cover);
             }
 
-            addView(cover,lp);
+            addView(cover, lp);
         }
 
 //        @Override
@@ -313,13 +325,12 @@ public class CoverFlowCarousel extends Carousel {
         public Bitmap getDrawingCache(boolean autoScale) {
             final Bitmap b = super.getDrawingCache(autoScale);
 
-            if(mReflectionCacheInvalid){
-                if(/*(mTouchState != TOUCH_STATE_FLING && mTouchState != TOUCH_STATE_ALIGN) || */mReflectionCache == null){
-                    try{
+            if (mReflectionCacheInvalid) {
+                if (/*(mTouchState != TOUCH_STATE_FLING && mTouchState != TOUCH_STATE_ALIGN) || */mReflectionCache == null) {
+                    try {
                         mReflectionCache = createReflectionBitmap(b);
                         mReflectionCacheInvalid = false;
-                    }
-                    catch (NullPointerException e){
+                    } catch (NullPointerException e) {
                         Log.e(VIEW_LOG_TAG, "Null pointer in createReflectionBitmap. Bitmap b=" + b, e);
                     }
                 }
@@ -327,8 +338,8 @@ public class CoverFlowCarousel extends Carousel {
             return b;
         }
 
-        public void recycle(){ //todo add puttocache method and call recycle
-            if(mReflectionCache != null){
+        public void recycle() { //todo add puttocache method and call recycle
+            if (mReflectionCache != null) {
                 mReflectionCache.recycle();
                 mReflectionCache = null;
             }
